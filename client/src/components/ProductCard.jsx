@@ -1,6 +1,13 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 const ProductCard = ({ product }) => {
+    const navigate = useNavigate();
+
+    const handleViewDetails = () => {
+        navigate(`/product/${product.id}`); // Navigate to the product details page with the product ID
+    };
+
     return (
         <div className="w-60 h-80 bg-gray-100 dark:bg-gray-800 p-3 flex flex-col gap-2 rounded-2xl shadow-lg hover:shadow-xl dark:shadow-md dark:hover:shadow-lg border border-gray-200 dark:border-gray-700 transition-shadow duration-300">
             {/* Product Image */}
@@ -26,7 +33,10 @@ const ProductCard = ({ product }) => {
                     <span className="font-bold text-red-600 dark:text-red-500">
                         ₹{product.price}
                     </span>
-                    <button className="hover:bg-sky-700 bg-sky-800 text-gray-50 py-1 px-3 rounded-md transition-colors duration-300 text-sm">
+                    <button
+                        onClick={handleViewDetails}
+                        className="hover:bg-sky-700 bg-sky-800 text-gray-50 py-1 px-3 rounded-md transition-colors duration-300 text-sm cursor-pointer"
+                    >
                         View Details
                     </button>
                 </div>

@@ -12,12 +12,20 @@ const Home = () => {
                 <p className="mt-4 text-lg text-gray-700 dark:text-gray-300">
                     Buy, Sell, or Pawn your items with ease.
                 </p>
-                <Link
-                    to="/products"
-                    className="mt-6 inline-block px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-500 dark:bg-indigo-500 dark:hover:bg-indigo-400"
-                >
-                    Browse Products
-                </Link>
+                <div className="mt-6 flex justify-center gap-4">
+                    <Link
+                        to="/products"
+                        className="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-500 dark:bg-indigo-500 dark:hover:bg-indigo-400"
+                    >
+                        Browse Products
+                    </Link>
+                    <Link
+                        to="/sell"
+                        className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-500 dark:bg-green-500 dark:hover:bg-green-400"
+                    >
+                        Sell Products
+                    </Link>
+                </div>
             </section>
 
             {/* Featured Products Section */}
@@ -125,13 +133,19 @@ const Home = () => {
                 </div>
             </section>
 
-            {/* Additional Browse Products Button */}
-            <div className="text-center py-8 text-xl pt-12">
+            {/* Additional Browse and Sell Products Buttons */}
+            <div className="text-center py-8 text-xl pt-12 flex justify-center gap-4">
                 <Link
                     to="/products"
                     className="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-500 dark:bg-indigo-500 dark:hover:bg-indigo-400"
                 >
                     Browse Products
+                </Link>
+                <Link
+                    to="/sell"
+                    className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-500 dark:bg-green-500 dark:hover:bg-green-400"
+                >
+                    Sell Products
                 </Link>
             </div>
         </div>

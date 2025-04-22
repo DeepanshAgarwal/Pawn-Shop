@@ -37,12 +37,18 @@ const Navbar = ({ isLoggedIn }) => {
                 </Link>
 
                 {/* Links Section */}
-                <div className="hidden md:flex flex-1 justify-center">
+                <div className="hidden md:flex flex-1 justify-center items-center gap-6">
                     <Link
                         to="/products"
                         className="text-gray-800 hover:text-blue-500 dark:text-white dark:hover:text-blue-400 font-medium"
                     >
-                        Products
+                        All Products
+                    </Link>
+                    <Link
+                        to="/sell"
+                        className="text-gray-800 hover:text-blue-500 dark:text-white dark:hover:text-blue-400 font-medium"
+                    >
+                        Sell Products
                     </Link>
                 </div>
 
@@ -60,7 +66,7 @@ const Navbar = ({ isLoggedIn }) => {
                                 Profile
                             </button>
                             {isUserMenuOpen && (
-                                <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 shadow-lg rounded-lg py-2">
+                                <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 shadow-lg rounded-lg py-2 z-10">
                                     <Link
                                         to="/profile"
                                         className="block px-4 py-2 text-gray-800 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"

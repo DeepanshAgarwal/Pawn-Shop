@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import ProductCard from "../components/ProductCard";
 import SearchBar from "../components/SearchBar";
 import CategoryFilter from "../components/CategoryFilter";
@@ -40,15 +41,29 @@ const Products = () => {
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200 flex flex-col items-center p-6">
             {/* Search and Filter Section */}
-            <div className="w-full max-w-6xl flex flex-col md:flex-row justify-between items-center gap-4 mb-8">
-                <SearchBar
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                />
-                <CategoryFilter
-                    selected={selectedCategory}
-                    onChange={setSelectedCategory}
-                />
+            <div className="w-full max-w-6xl flex flex-wrap justify-center md:justify-between items-center gap-4 mb-8">
+                {/* Search Bar and Sell Button */}
+                <div className="flex items-center gap-4">
+                    <SearchBar
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="flex-grow"
+                    />
+                    <Link
+                        to="/sell"
+                        className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-500 dark:bg-green-500 dark:hover:bg-green-400 transition-all duration-300 whitespace-nowrap"
+                    >
+                        Sell
+                    </Link>
+                </div>
+
+                {/* Category Filter */}
+                <div className="flex-shrink-0 flex justify-center w-full md:w-auto">
+                    <CategoryFilter
+                        selected={selectedCategory}
+                        onChange={setSelectedCategory}
+                    />
+                </div>
             </div>
 
             {/* Products Grid */}

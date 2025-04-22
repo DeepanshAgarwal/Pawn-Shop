@@ -2,12 +2,11 @@ import { Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import Products from "./pages/Products";
 import Login from "./pages/Login";
-// import Signup from './pages/Signup';
 // import Profile from './pages/Profile';
-// import Listed from './pages/Listed';
-// import ListProduct from './pages/ListProduct';
+import Sell from "./pages/Sell";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import ProductDescription from "./pages/ProductDescription";
 
 const App = () => {
     const isLoggedIn = true; // temp, replace with actual auth state
@@ -21,10 +20,12 @@ const App = () => {
                     <Route path="/" element={<Home />} />
                     <Route path="/products" element={<Products />} />
                     <Route path="/login" element={<Login type="signup" />} />
-                    {/* <Route path="/signup" element={<Signup />} /> */}
+                    <Route
+                        path="/product/:id"
+                        element={<ProductDescription />}
+                    />
+                    <Route path="/sell" element={<Sell />} />
                     {/* <Route path="/profile" element={<Profile />} /> */}
-                    {/* <Route path="/listed" element={<Listed />} /> */}
-                    {/* <Route path="/list-product" element={<ListProduct />} /> */}
                 </Routes>
             </main>
 
