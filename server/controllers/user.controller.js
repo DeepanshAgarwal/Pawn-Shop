@@ -88,3 +88,80 @@ export const loginUser = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+
+export const getUserProfile = async (req, res) => {
+    try {
+        const user = req.user;
+
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        res.status(200).json({
+            _id: user._id,
+            name: user.name,
+            email: user.email,
+        });
+    } catch (error) {
+        console.error("Error fetching profile:", error);
+        res.status(500).json({ message: "Failed to fetch profile" });
+    }
+};
+
+export const updateUserProfile = async (req, res) => {
+    const { name, email, oldPassword, newPassword } = req.body;
+
+    try {
+        const user = req.user;
+
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        // Check if email is already taken by another user
+        if (email && email !== user.email) {
+            const emailExists = await User.findOne({ email });
+            if (emailExists) {
+                return res
+                    .status(400)
+                    .json({ message: "Email already in use" });
+            }
+        }
+
+        // Update password if provided
+        if (oldPassword && newPassword) {
+            const isMatch = await bcrypt.compare(oldPassword, user.password);
+            if (!isMatch) {
+                return res
+                    .status(400)
+                    .json({ message: "Old password is incorrect" });
+            }
+
+            if (newPassword.length < 8) {
+                return res.status(400).json({
+                    message: "New password must be at least 8 characters long",
+                });
+            }
+
+            // Hash new password before saving
+            const hashedPassword = await bcrypt.hash(newPassword, 10);
+            user.password = hashedPassword;
+        }
+
+        // Update user profile fields
+        user.name = name || user.name;
+        user.email = email || user.email;
+
+        await user.save();
+
+        res.status(200).json({
+            _id: user._id,
+            name: user.name,
+            email: user.email,
+            message: "Profile updated successfully",
+        });
+    } catch (error) {
+        console.error("Error updating profile:", error);
+        res.status(500).json({ message: "Failed to update profile" });
+    }
+};
