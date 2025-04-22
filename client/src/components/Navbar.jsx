@@ -1,11 +1,14 @@
 import { useState, useEffect, useRef } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { User } from "lucide-react";
 import DarkModeToggle from "./DarkModeToggle";
+import { useAuth } from "../context/AuthContext";
 
-const Navbar = ({ isLoggedIn }) => {
+const Navbar = () => {
     const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
     const userMenuRef = useRef(null);
+    const { token, removeToken } = useAuth(); // Use AuthContext for token and logout
+    const navigate = useNavigate();
 
     const toggleUserMenu = () => setIsUserMenuOpen(!isUserMenuOpen);
 
@@ -24,6 +27,11 @@ const Navbar = ({ isLoggedIn }) => {
             document.removeEventListener("mousedown", handleClickOutside);
         };
     }, []);
+
+    const handleLogout = () => {
+        removeToken(); // Remove token from context and localStorage
+        navigate("/login"); // Redirect to login page
+    };
 
     return (
         <nav className="bg-white dark:bg-gray-800 shadow-md px-6 py-4">
@@ -55,7 +63,7 @@ const Navbar = ({ isLoggedIn }) => {
                 {/* Dark Mode Toggle and Profile Section */}
                 <div className="flex items-center gap-6">
                     <DarkModeToggle />
-                    {isLoggedIn ? (
+                    {token ? (
                         <div className="relative" ref={userMenuRef}>
                             {/* User Icon */}
                             <button
@@ -79,7 +87,10 @@ const Navbar = ({ isLoggedIn }) => {
                                     >
                                         Products Listed
                                     </Link>
-                                    <button className="block w-full text-left px-4 py-2 text-red-600 hover:bg-gray-100 dark:text-red-400 dark:hover:bg-gray-700">
+                                    <button
+                                        onClick={handleLogout}
+                                        className="block w-full text-left px-4 py-2 text-red-600 hover:bg-gray-100 dark:text-red-400 dark:hover:bg-gray-700"
+                                    >
                                         Logout
                                     </button>
                                 </div>

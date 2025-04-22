@@ -1,4 +1,7 @@
 import React, { useState } from "react";
+import axios from "axios";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const Sell = () => {
     const initialFormData = {
@@ -9,6 +12,7 @@ const Sell = () => {
         condition: "Used",
         usageNumber: "",
         usageUnit: "years",
+        category: "Furniture", // Default category
         sellerName: "",
         email: "",
         phone: "",
@@ -17,6 +21,8 @@ const Sell = () => {
     };
 
     const [formData, setFormData] = useState(initialFormData);
+    const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
 
     const handleChange = (e) => {
         const { name, value, files } = e.target;
@@ -31,11 +37,73 @@ const Sell = () => {
         setFormData({ ...formData, image: null });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log("Submitted:", formData);
-        // Clear the form after submission
-        setFormData(initialFormData);
+
+        if (!formData.image) {
+            toast.error("Please upload an image.");
+            return;
+        }
+
+        setLoading(true);
+
+        try {
+            // Prepare form data for submission
+            const data = new FormData();
+            data.append("image", formData.image);
+            data.append("name", formData.name);
+            data.append("description", formData.description);
+            data.append("price", formData.price);
+            data.append("condition", formData.condition);
+            data.append(
+                "usageDuration",
+                JSON.stringify({
+                    value: formData.usageNumber,
+                    unit: formData.usageUnit,
+                })
+            );
+            data.append("category", formData.category);
+            data.append(
+                "seller",
+                JSON.stringify({
+                    name: formData.sellerName,
+                    email: formData.email,
+                    phone: formData.phone,
+                    hostel: formData.hostel,
+                    room: formData.room,
+                })
+            );
+
+            // Make API request to create a product
+            const response = await axios.post(
+                `${import.meta.env.VITE_BACKEND_URL}/api/products/create`,
+                data,
+                {
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                        Authorization: `Bearer ${localStorage.getItem(
+                            "token"
+                        )}`,
+                    },
+                }
+            );
+
+            if (response.status === 201) {
+                toast.success("Product listed successfully!");
+                navigate("/products"); // Redirect to products page
+            } else {
+                toast.error(
+                    response.data.message || "Failed to list the product."
+                );
+            }
+        } catch (error) {
+            console.error(error);
+            toast.error(
+                error.response?.data?.message || "Failed to list the product."
+            );
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -178,6 +246,25 @@ const Sell = () => {
                     )}
                 </div>
 
+                {/* Category */}
+                <div>
+                    <label className="block text-sm mb-1 text-gray-700 dark:text-gray-300">
+                        Category
+                    </label>
+                    <select
+                        name="category"
+                        value={formData.category}
+                        onChange={handleChange}
+                        className="bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 p-2 rounded-md w-full"
+                        required
+                    >
+                        <option value="Furniture">Furniture</option>
+                        <option value="Electronics">Electronics</option>
+                        <option value="Books">Books</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+
                 {/* Seller Info */}
                 <h3 className="text-lg font-semibold mt-4 text-gray-800 dark:text-gray-200">
                     Seller Details
@@ -234,8 +321,9 @@ const Sell = () => {
                 <button
                     type="submit"
                     className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 transition duration-150 py-2 px-4 rounded-md font-bold mt-4 w-full"
+                    disabled={loading}
                 >
-                    Submit Item
+                    {loading ? "Submitting..." : "Submit Item"}
                 </button>
             </form>
         </div>

@@ -5,7 +5,7 @@ const ProductCard = ({ product }) => {
     const navigate = useNavigate();
 
     const handleViewDetails = () => {
-        navigate(`/product/${product.id}`); // Navigate to the product details page with the product ID
+        navigate(`/product/${product._id}`); // Use `_id` from the database
     };
 
     return (
@@ -26,7 +26,8 @@ const ProductCard = ({ product }) => {
                 </span>
                 {product.condition && (
                     <p className="text-xs text-gray-600 dark:text-gray-400">
-                        {product.condition} ({product.years} years)
+                        {product.condition} ({product.usageDuration?.value}{" "}
+                        {product.usageDuration?.unit})
                     </p>
                 )}
                 <div className="flex flex-row justify-between items-center mt-auto">

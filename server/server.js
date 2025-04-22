@@ -4,12 +4,13 @@ import "dotenv/config";
 import connectDB from "./config/mongodb.js";
 import userRoutes from "./routes/user.routes.js";
 import productRoutes from "./routes/product.routes.js";
+import { connectCloudinary } from "./config/cloudinary.js";
 
 //App config
 const app = express();
 const port = process.env.PORT || 4000;
 connectDB();
-// connectCloudinary();
+connectCloudinary();
 
 //middlewares
 app.use(express.json());

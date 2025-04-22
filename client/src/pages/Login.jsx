@@ -1,29 +1,59 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 const Login = () => {
     const [type, setType] = useState("login"); // State to toggle between login and signup
     const [formData, setFormData] = useState({
-        firstName: "",
-        lastName: "",
+        name: "",
         email: "",
         password: "",
-        gender: "male", // Default gender value for signup
     });
+    const { token, saveToken } = useAuth(); // Use AuthContext to manage token
+    const navigate = useNavigate();
+    const location = useLocation();
+
+    // Get the redirect path from state or default to "/"
+    const from = location.state?.from?.pathname || "/";
+
+    // Redirect to the intended page if token is already available
+    useEffect(() => {
+        if (token) {
+            navigate(from, { replace: true });
+        }
+    }, [token, navigate, from]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        // Handle form submission logic here (e.g., call an API or validate)
-        console.log(formData);
+        try {
+            const endpoint =
+                type === "signup"
+                    ? `${import.meta.env.VITE_BACKEND_URL}/api/users/register`
+                    : `${import.meta.env.VITE_BACKEND_URL}/api/users/login`;
+
+            const { data } = await axios.post(endpoint, formData);
+            saveToken(data.token); // Save token to context and localStorage
+            toast.success(
+                `${type === "signup" ? "Sign Up" : "Login"} successful!`
+            );
+        } catch (error) {
+            console.error(error);
+            toast.error(
+                error.response?.data?.message ||
+                    "An error occurred. Please try again."
+            );
+        }
     };
 
     const handleForgotPassword = () => {
-        // Handle forgot password logic here (e.g., redirect to reset password page)
-        alert("This feature hasn't been implemented yet");
+        toast.info("This feature hasn't been implemented yet.");
     };
 
     return (
@@ -34,24 +64,15 @@ const Login = () => {
                 </h2>
                 <form onSubmit={handleSubmit} className="flex flex-col">
                     {type === "signup" && (
-                        <div className="flex space-x-4 mb-4">
-                            <input
-                                name="firstName"
-                                placeholder="First Name"
-                                className="bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 border border-gray-300 dark:border-gray-600 rounded-md p-2 w-1/2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                                type="text"
-                                value={formData.firstName}
-                                onChange={handleChange}
-                            />
-                            <input
-                                name="lastName"
-                                placeholder="Last Name"
-                                className="bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 border border-gray-300 dark:border-gray-600 rounded-md p-2 w-1/2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                                type="text"
-                                value={formData.lastName}
-                                onChange={handleChange}
-                            />
-                        </div>
+                        <input
+                            name="name"
+                            placeholder="Name"
+                            className="bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 border border-gray-300 dark:border-gray-600 rounded-md p-2 mb-4 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                            type="text"
+                            value={formData.name}
+                            onChange={handleChange}
+                            required
+                        />
                     )}
                     <input
                         name="email"
@@ -60,6 +81,7 @@ const Login = () => {
                         type="email"
                         value={formData.email}
                         onChange={handleChange}
+                        required
                     />
                     <input
                         name="password"
@@ -68,6 +90,7 @@ const Login = () => {
                         type="password"
                         value={formData.password}
                         onChange={handleChange}
+                        required
                     />
                     {type === "login" && (
                         <button
@@ -77,27 +100,6 @@ const Login = () => {
                         >
                             Forgot Password?
                         </button>
-                    )}
-                    {type === "signup" && (
-                        <>
-                            <label
-                                className="text-sm mb-2 text-gray-800 dark:text-gray-200"
-                                htmlFor="gender"
-                            >
-                                Gender
-                            </label>
-                            <select
-                                name="gender"
-                                className="bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 border border-gray-300 dark:border-gray-600 rounded-md p-2 mb-4 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                                id="gender"
-                                value={formData.gender}
-                                onChange={handleChange}
-                            >
-                                <option value="male">Male</option>
-                                <option value="female">Female</option>
-                                <option value="other">Other</option>
-                            </select>
-                        </>
                     )}
                     <p className="text-gray-600 dark:text-gray-400 mt-4">
                         {type === "signup" ? (

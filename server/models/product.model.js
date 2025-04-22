@@ -35,6 +35,11 @@ const productSchema = new mongoose.Schema(
             type: String, // Single image URL or base64 string
             required: true,
         },
+        category: {
+            type: String,
+            required: true,
+            enum: ["Furniture", "Electronics", "Books", "Other"], // Add more categories as needed
+        },
         seller: {
             name: { type: String, required: true },
             email: { type: String, required: true },
