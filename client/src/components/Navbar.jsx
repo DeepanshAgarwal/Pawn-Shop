@@ -7,7 +7,8 @@ import { useAuth } from "../context/AuthContext";
 const Navbar = () => {
     const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
     const userMenuRef = useRef(null);
-    const { token, removeToken } = useAuth(); // Use AuthContext for token and logout
+    const { auth } = useAuth();
+    const { token, removeToken } = auth;
     const navigate = useNavigate();
 
     const toggleUserMenu = () => setIsUserMenuOpen(!isUserMenuOpen);

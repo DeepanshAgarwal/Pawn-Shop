@@ -1,27 +1,51 @@
-import { createContext, useContext, useState, useEffect } from "react";
+import { jwtDecode } from "jwt-decode";
+import { createContext, useContext, useState } from "react";
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-    const [token, setToken] = useState(localStorage.getItem("token") || "");
+    const [token, setToken] = useState(() => {
+        try {
+            const storedToken = localStorage.getItem("token");
+            if (storedToken) {
+                const decoded = jwtDecode(storedToken);
+                if (decoded.exp * 1000 > Date.now()) {
+                    return storedToken;
+                } else {
+                    localStorage.removeItem("token");
+                }
+            }
+        } catch (error) {
+            console.error(
+                "Error accessing localStorage or decoding token:",
+                error
+            );
+        }
+        return "";
+    });
 
     const saveToken = (newToken) => {
-        setToken(newToken);
-        localStorage.setItem("token", newToken);
+        try {
+            setToken(newToken);
+            localStorage.setItem("token", newToken);
+        } catch (error) {
+            console.error("Error saving token to localStorage:", error);
+        }
     };
 
     const removeToken = () => {
-        setToken("");
-        localStorage.removeItem("token");
+        try {
+            setToken("");
+            localStorage.removeItem("token");
+        } catch (error) {
+            console.error("Error removing token from localStorage:", error);
+        }
     };
 
-    useEffect(() => {
-        const storedToken = localStorage.getItem("token");
-        if (storedToken) setToken(storedToken);
-    }, []);
-
     return (
-        <AuthContext.Provider value={{ token, saveToken, removeToken }}>
+        <AuthContext.Provider
+            value={{ auth: { token, saveToken, removeToken } }}
+        >
             {children}
         </AuthContext.Provider>
     );

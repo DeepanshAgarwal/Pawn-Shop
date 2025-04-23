@@ -11,7 +11,8 @@ const Login = () => {
         email: "",
         password: "",
     });
-    const { token, saveToken } = useAuth(); // Use AuthContext to manage token
+    const { auth } = useAuth();
+    const { token, saveToken } = auth;
     const navigate = useNavigate();
     const location = useLocation();
 
