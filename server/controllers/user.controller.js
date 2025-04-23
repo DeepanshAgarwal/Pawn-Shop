@@ -112,7 +112,7 @@ export const updateUserProfile = async (req, res) => {
     const { name, email, oldPassword, newPassword } = req.body;
 
     try {
-        const user = req.user;
+        const user = await User.findById(req.user._id); // Fetch the full user object, including the password
 
         if (!user) {
             return res.status(404).json({ message: "User not found" });

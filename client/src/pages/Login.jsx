@@ -50,10 +50,17 @@ const Login = () => {
             );
         } catch (error) {
             console.error(error);
-            toast.error(
-                error.response?.data?.message ||
-                    "An error occurred. Please try again."
-            );
+            // Ensure all error responses are handled
+            if (error.response) {
+                toast.error(
+                    error.response.data.message ||
+                        "An error occurred. Please try again."
+                );
+            } else {
+                toast.error(
+                    "Unable to connect to the server. Please check your network."
+                );
+            }
         } finally {
             setLoading(false); // Set loading to false
         }

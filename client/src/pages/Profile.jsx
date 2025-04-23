@@ -82,9 +82,13 @@ const Profile = () => {
 
     const handleChangePassword = async () => {
         try {
-            await axios.put(
+            // Send only the password fields to the backend
+            const { data } = await axios.put(
                 `${import.meta.env.VITE_BACKEND_URL}/api/users/profile`,
-                passwords,
+                {
+                    oldPassword: passwords.oldPassword,
+                    newPassword: passwords.newPassword,
+                },
                 {
                     headers: { Authorization: `Bearer ${token}` },
                 }
@@ -93,7 +97,9 @@ const Profile = () => {
             toast.success("Password changed successfully!");
         } catch (error) {
             console.error("Failed to change password:", error);
-            toast.error("Failed to change password.");
+            toast.error(
+                error.response?.data?.message || "Failed to change password."
+            );
         }
     };
 

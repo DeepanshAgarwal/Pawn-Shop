@@ -8,6 +8,8 @@ import Footer from "./components/Footer";
 import ProductDescription from "./pages/ProductDescription";
 import Profile from "./pages/Profile";
 import ProtectedRoute from "./components/ProtectedRoute";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const App = () => {
     return (
@@ -43,6 +45,7 @@ const App = () => {
             </main>
 
             <Footer />
+            <ToastContainer />
         </div>
     );
 };
