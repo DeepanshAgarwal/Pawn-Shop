@@ -3,6 +3,7 @@ import { useAuth } from "../context/AuthContext";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import ProductCard from "../components/ProductCard";
 
 const Profile = () => {
     const { auth } = useAuth();
@@ -103,7 +104,15 @@ const Profile = () => {
 
     return (
         <div className="p-6 max-w-4xl mx-auto">
-            <h1 className="text-3xl font-bold mb-6 text-center">My Profile</h1>
+            <div className="flex justify-between items-center mb-6">
+                <h1 className="text-3xl font-bold">My Profile</h1>
+                <button
+                    onClick={handleLogout}
+                    className="bg-red-500 text-white px-6 py-2 rounded"
+                >
+                    Logout
+                </button>
+            </div>
 
             {/* User Details Section */}
             <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md mb-6">
@@ -208,29 +217,14 @@ const Profile = () => {
             <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md mb-6">
                 <h2 className="text-xl font-semibold mb-4">My Listings</h2>
                 {listings.length > 0 ? (
-                    <ul className="space-y-2">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                         {listings.map((listing) => (
-                            <li
-                                key={listing._id}
-                                className="border-b pb-2 pt-2 text-gray-700 dark:text-gray-300"
-                            >
-                                {listing.name}
-                            </li>
+                            <ProductCard key={listing._id} product={listing} />
                         ))}
-                    </ul>
+                    </div>
                 ) : (
                     <p>No listings found.</p>
                 )}
-            </div>
-
-            {/* Logout Button */}
-            <div className="text-center">
-                <button
-                    onClick={handleLogout}
-                    className="bg-red-500 text-white px-6 py-2 rounded"
-                >
-                    Logout
-                </button>
             </div>
         </div>
     );
