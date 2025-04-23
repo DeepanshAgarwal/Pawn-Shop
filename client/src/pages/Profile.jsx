@@ -1,0 +1,239 @@
+import React, { useState, useEffect } from "react";
+import { useAuth } from "../context/AuthContext";
+import axios from "axios";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+
+const Profile = () => {
+    const { auth } = useAuth();
+    const { token, removeToken } = auth;
+    const [userDetails, setUserDetails] = useState({});
+    const [listings, setListings] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [editMode, setEditMode] = useState(false);
+    const [updatedDetails, setUpdatedDetails] = useState({});
+    const [passwords, setPasswords] = useState({
+        oldPassword: "",
+        newPassword: "",
+    });
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const fetchProfile = async () => {
+            try {
+                const { data } = await axios.get(
+                    `${import.meta.env.VITE_BACKEND_URL}/api/users/profile`,
+                    {
+                        headers: { Authorization: `Bearer ${token}` },
+                    }
+                );
+                setUserDetails(data);
+                setUpdatedDetails(data);
+            } catch (error) {
+                console.error("Failed to fetch profile:", error);
+                toast.error("Failed to load profile.");
+            }
+        };
+
+        const fetchListings = async () => {
+            try {
+                const { data } = await axios.get(
+                    `${
+                        import.meta.env.VITE_BACKEND_URL
+                    }/api/products/my-products`,
+                    {
+                        headers: { Authorization: `Bearer ${token}` },
+                    }
+                );
+                setListings(data);
+            } catch (error) {
+                console.error("Failed to fetch listings:", error);
+                toast.error("Failed to load listings.");
+            }
+        };
+
+        fetchProfile();
+        fetchListings();
+        setLoading(false);
+    }, [token]);
+
+    const handleUpdate = async () => {
+        try {
+            const { data } = await axios.put(
+                `${import.meta.env.VITE_BACKEND_URL}/api/users/profile`,
+                updatedDetails,
+                {
+                    headers: { Authorization: `Bearer ${token}` },
+                }
+            );
+            setUserDetails(data);
+            setEditMode(false);
+            toast.success("Profile updated successfully!");
+        } catch (error) {
+            console.error("Failed to update profile:", error);
+            toast.error("Failed to update profile.");
+        }
+    };
+
+    const handleChangePassword = async () => {
+        try {
+            await axios.put(
+                `${import.meta.env.VITE_BACKEND_URL}/api/users/profile`,
+                passwords,
+                {
+                    headers: { Authorization: `Bearer ${token}` },
+                }
+            );
+            setPasswords({ oldPassword: "", newPassword: "" });
+            toast.success("Password changed successfully!");
+        } catch (error) {
+            console.error("Failed to change password:", error);
+            toast.error("Failed to change password.");
+        }
+    };
+
+    const handleLogout = () => {
+        removeToken();
+        navigate("/login");
+    };
+
+    if (loading) {
+        return <p>Loading...</p>;
+    }
+
+    return (
+        <div className="p-6 max-w-4xl mx-auto">
+            <h1 className="text-3xl font-bold mb-6 text-center">My Profile</h1>
+
+            {/* User Details Section */}
+            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md mb-6">
+                <h2 className="text-xl font-semibold mb-4">User Details</h2>
+                {editMode ? (
+                    <div className="space-y-4">
+                        <input
+                            type="text"
+                            value={updatedDetails.name}
+                            onChange={(e) =>
+                                setUpdatedDetails({
+                                    ...updatedDetails,
+                                    name: e.target.value,
+                                })
+                            }
+                            className="border p-2 rounded w-full"
+                            placeholder="Name"
+                        />
+                        <input
+                            type="email"
+                            value={updatedDetails.email}
+                            onChange={(e) =>
+                                setUpdatedDetails({
+                                    ...updatedDetails,
+                                    email: e.target.value,
+                                })
+                            }
+                            className="border p-2 rounded w-full"
+                            placeholder="Email"
+                        />
+                        <div className="flex gap-4">
+                            <button
+                                onClick={handleUpdate}
+                                className="bg-blue-500 text-white px-4 py-2 rounded"
+                            >
+                                Save
+                            </button>
+                            <button
+                                onClick={() => setEditMode(false)}
+                                className="bg-gray-500 text-white px-4 py-2 rounded"
+                            >
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+                ) : (
+                    <div className="space-y-2">
+                        <p>
+                            <strong>Name:</strong> {userDetails.name}
+                        </p>
+                        <p>
+                            <strong>Email:</strong> {userDetails.email}
+                        </p>
+                        <button
+                            onClick={() => setEditMode(true)}
+                            className="bg-blue-500 text-white px-4 py-2 rounded mt-4"
+                        >
+                            Edit
+                        </button>
+                    </div>
+                )}
+            </div>
+
+            {/* Change Password Section */}
+            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md mb-6">
+                <h2 className="text-xl font-semibold mb-4">Change Password</h2>
+                <div className="space-y-4">
+                    <input
+                        type="password"
+                        value={passwords.oldPassword}
+                        onChange={(e) =>
+                            setPasswords({
+                                ...passwords,
+                                oldPassword: e.target.value,
+                            })
+                        }
+                        className="border p-2 rounded w-full"
+                        placeholder="Old Password"
+                    />
+                    <input
+                        type="password"
+                        value={passwords.newPassword}
+                        onChange={(e) =>
+                            setPasswords({
+                                ...passwords,
+                                newPassword: e.target.value,
+                            })
+                        }
+                        className="border p-2 rounded w-full"
+                        placeholder="New Password"
+                    />
+                    <button
+                        onClick={handleChangePassword}
+                        className="bg-green-500 text-white px-4 py-2 rounded"
+                    >
+                        Change Password
+                    </button>
+                </div>
+            </div>
+
+            {/* User Listings Section */}
+            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md mb-6">
+                <h2 className="text-xl font-semibold mb-4">My Listings</h2>
+                {listings.length > 0 ? (
+                    <ul className="space-y-2">
+                        {listings.map((listing) => (
+                            <li
+                                key={listing._id}
+                                className="border-b pb-2 pt-2 text-gray-700 dark:text-gray-300"
+                            >
+                                {listing.name}
+                            </li>
+                        ))}
+                    </ul>
+                ) : (
+                    <p>No listings found.</p>
+                )}
+            </div>
+
+            {/* Logout Button */}
+            <div className="text-center">
+                <button
+                    onClick={handleLogout}
+                    className="bg-red-500 text-white px-6 py-2 rounded"
+                >
+                    Logout
+                </button>
+            </div>
+        </div>
+    );
+};
+
+export default Profile;

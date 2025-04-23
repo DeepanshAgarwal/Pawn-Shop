@@ -88,13 +88,28 @@ const ProductDescription = () => {
                                     Condition
                                 </h3>
                                 <p className="text-sm text-gray-600 dark:text-gray-300">
-                                    {product.condition} – Used for{" "}
-                                    {product.usageDuration?.value}{" "}
-                                    {product.usageDuration?.unit}
+                                    {product.condition}
+                                    {product.condition === "Used" &&
+                                        ` – Used for ${product.usageDuration?.value} ${product.usageDuration?.unit}`}
                                 </p>
                             </div>
                         )}
                     </div>
+                </div>
+
+                {/* Product Info */}
+                <div className="px-6 pb-6">
+                    <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">
+                        Product Information
+                    </h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                        <span className="font-medium">Product ID:</span>{" "}
+                        {product._id || "N/A"}
+                    </p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                        <span className="font-medium">Listed By:</span>{" "}
+                        {product.listedBy?.name || "N/A"}
+                    </p>
                 </div>
 
                 {/* Seller Info */}

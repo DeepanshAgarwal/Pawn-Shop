@@ -23,11 +23,15 @@ const productSchema = new mongoose.Schema(
         usageDuration: {
             value: {
                 type: Number,
-                required: true,
+                required: function () {
+                    return this.condition === "Used";
+                },
             },
             unit: {
                 type: String,
-                required: true,
+                required: function () {
+                    return this.condition === "Used";
+                },
                 enum: ["days", "months", "years"],
             },
         },

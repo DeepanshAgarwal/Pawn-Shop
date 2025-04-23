@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const Login = () => {
     const [type, setType] = useState("login"); // State to toggle between login and signup
@@ -11,6 +12,7 @@ const Login = () => {
         email: "",
         password: "",
     });
+    const [showPassword, setShowPassword] = useState(false); // State to toggle password visibility
     const { auth } = useAuth();
     const { token, saveToken } = auth;
     const navigate = useNavigate();
@@ -63,7 +65,10 @@ const Login = () => {
                 <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-6">
                     {type === "signup" ? "Sign Up" : "Login"}
                 </h2>
-                <form onSubmit={handleSubmit} className="flex flex-col">
+                <form
+                    onSubmit={handleSubmit}
+                    className="flex flex-col relative"
+                >
                     {type === "signup" && (
                         <input
                             name="name"
@@ -84,15 +89,24 @@ const Login = () => {
                         onChange={handleChange}
                         required
                     />
-                    <input
-                        name="password"
-                        placeholder="Password"
-                        className="bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 border border-gray-300 dark:border-gray-600 rounded-md p-2 mb-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                        type="password"
-                        value={formData.password}
-                        onChange={handleChange}
-                        required
-                    />
+                    <div className="relative mb-2">
+                        <input
+                            name="password"
+                            placeholder="Password"
+                            className="bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 border border-gray-300 dark:border-gray-600 rounded-md p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none w-full"
+                            type={showPassword ? "text" : "password"} // Toggle input type
+                            value={formData.password}
+                            onChange={handleChange}
+                            required
+                        />
+                        <button
+                            type="button"
+                            className="absolute right-3 top-3 text-gray-500 dark:text-gray-400"
+                            onClick={() => setShowPassword(!showPassword)}
+                        >
+                            {showPassword ? <FaEyeSlash /> : <FaEye />}
+                        </button>
+                    </div>
                     {type === "login" && (
                         <button
                             type="button"

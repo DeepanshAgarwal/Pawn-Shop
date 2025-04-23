@@ -26,8 +26,9 @@ const ProductCard = ({ product }) => {
                 </span>
                 {product.condition && (
                     <p className="text-xs text-gray-600 dark:text-gray-400">
-                        {product.condition} ({product.usageDuration?.value}{" "}
-                        {product.usageDuration?.unit})
+                        {product.condition}
+                        {product.condition === "Used" &&
+                            ` (${product.usageDuration?.value} ${product.usageDuration?.unit})`}
                     </p>
                 )}
                 <div className="flex flex-row justify-between items-center mt-auto">

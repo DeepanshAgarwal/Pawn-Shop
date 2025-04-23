@@ -45,6 +45,16 @@ const Sell = () => {
             return;
         }
 
+        if (
+            formData.condition === "Used" &&
+            (!formData.usageNumber || !formData.usageUnit)
+        ) {
+            toast.error(
+                "Please provide usage duration and unit for used items."
+            );
+            return;
+        }
+
         setLoading(true);
 
         try {
@@ -55,13 +65,15 @@ const Sell = () => {
             data.append("description", formData.description);
             data.append("price", formData.price);
             data.append("condition", formData.condition);
-            data.append(
-                "usageDuration",
-                JSON.stringify({
-                    value: formData.usageNumber,
-                    unit: formData.usageUnit,
-                })
-            );
+            if (formData.condition === "Used") {
+                data.append(
+                    "usageDuration",
+                    JSON.stringify({
+                        value: formData.usageNumber,
+                        unit: formData.usageUnit,
+                    })
+                );
+            }
             data.append("category", formData.category);
             data.append(
                 "seller",
