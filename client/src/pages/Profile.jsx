@@ -46,7 +46,11 @@ const Profile = () => {
                         headers: { Authorization: `Bearer ${token}` },
                     }
                 );
-                setListings(data);
+                // Sort listings by creation date in descending order
+                const sortedListings = data.sort(
+                    (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+                );
+                setListings(sortedListings);
             } catch (error) {
                 console.error("Failed to fetch listings:", error);
                 toast.error("Failed to load listings.");

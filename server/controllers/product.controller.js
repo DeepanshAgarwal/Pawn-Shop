@@ -14,8 +14,6 @@ export const createProduct = async (req, res) => {
             seller,
         } = req.body;
 
-        console.log("Received condition:", condition); // Debug log for condition
-
         // Validate required fields
         if (
             !name ||
