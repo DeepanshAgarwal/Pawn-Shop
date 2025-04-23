@@ -147,8 +147,9 @@ const Profile = () => {
                             <button
                                 onClick={handleUpdate}
                                 className="bg-blue-500 text-white px-4 py-2 rounded"
+                                disabled={loading} // Disable button when loading
                             >
-                                Save
+                                {loading ? "Saving..." : "Save"}
                             </button>
                             <button
                                 onClick={() => setEditMode(false)}

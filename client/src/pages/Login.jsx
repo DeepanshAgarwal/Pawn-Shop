@@ -13,6 +13,7 @@ const Login = () => {
         password: "",
     });
     const [showPassword, setShowPassword] = useState(false); // State to toggle password visibility
+    const [loading, setLoading] = useState(false); // Add loading state
     const { auth } = useAuth();
     const { token, saveToken } = auth;
     const navigate = useNavigate();
@@ -35,6 +36,7 @@ const Login = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setLoading(true); // Set loading to true
         try {
             const endpoint =
                 type === "signup"
@@ -52,6 +54,8 @@ const Login = () => {
                 error.response?.data?.message ||
                     "An error occurred. Please try again."
             );
+        } finally {
+            setLoading(false); // Set loading to false
         }
     };
 
@@ -144,8 +148,13 @@ const Login = () => {
                     <button
                         className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white font-bold py-2 px-4 rounded-md mt-6 hover:from-blue-600 hover:to-indigo-600 transition-all duration-200"
                         type="submit"
+                        disabled={loading} // Disable button when loading
                     >
-                        {type === "signup" ? "Sign Up" : "Login"}
+                        {loading
+                            ? "Processing..."
+                            : type === "signup"
+                            ? "Sign Up"
+                            : "Login"}
                     </button>
                 </form>
             </div>

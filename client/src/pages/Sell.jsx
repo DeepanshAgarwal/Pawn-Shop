@@ -333,7 +333,7 @@ const Sell = () => {
                 <button
                     type="submit"
                     className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 transition duration-150 py-2 px-4 rounded-md font-bold mt-4 w-full"
-                    disabled={loading}
+                    disabled={loading} // Disable button when loading
                 >
                     {loading ? "Submitting..." : "Submit Item"}
                 </button>
