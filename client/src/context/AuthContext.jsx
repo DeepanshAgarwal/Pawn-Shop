@@ -42,9 +42,12 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
+    const decodedToken = token ? jwtDecode(token) : null;
+    const userId = decodedToken ? decodedToken.id : null;
+
     return (
         <AuthContext.Provider
-            value={{ auth: { token, saveToken, removeToken } }}
+            value={{ auth: { token, saveToken, removeToken, userId } }}
         >
             {children}
         </AuthContext.Provider>

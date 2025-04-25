@@ -1,12 +1,20 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import moment from "moment";
+import { useAuth } from "../context/AuthContext";
+import Modal from "../components/Modal";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const ProductDescription = () => {
     const { id } = useParams();
+    const navigate = useNavigate();
+    const { auth } = useAuth();
+    const currentUserId = auth.userId;
     const [product, setProduct] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     useEffect(() => {
         const fetchProduct = async () => {
@@ -25,6 +33,24 @@ const ProductDescription = () => {
 
         fetchProduct();
     }, [id]);
+
+    const handleDelete = async () => {
+        try {
+            await axios.delete(
+                `${import.meta.env.VITE_BACKEND_URL}/api/products/${id}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${auth.token}`,
+                    },
+                }
+            );
+            toast.success("Product deleted successfully");
+            navigate("/"); // Redirect to home page after deletion
+        } catch (error) {
+            console.error("Error deleting product:", error);
+            toast.error("Failed to delete the product. Please try again.");
+        }
+    };
 
     if (loading) {
         return (
@@ -46,8 +72,25 @@ const ProductDescription = () => {
         );
     }
 
+    if (!currentUserId) {
+        console.error(
+            "Current User ID is undefined. Ensure the AuthContext is providing the correct userId."
+        );
+    }
+
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 p-4 sm:p-8">
+            <Modal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                onConfirm={() => {
+                    setIsModalOpen(false);
+                    handleDelete();
+                }}
+                title="Confirm Deletion"
+                message="Are you sure you want to delete this product? This action cannot be undone."
+            />
+
             <div className="max-w-5xl mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-xl overflow-hidden">
                 {/* Header */}
                 <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex flex-col sm:flex-row items-start sm:items-center justify-between">
@@ -93,6 +136,16 @@ const ProductDescription = () => {
                                         ` – Used for ${product.usageDuration?.value} ${product.usageDuration?.unit}`}
                                 </p>
                             </div>
+                        )}
+
+                        {/* Delete Button */}
+                        {product.listedBy?._id === currentUserId && (
+                            <button
+                                onClick={() => setIsModalOpen(true)}
+                                className="bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-md transition-colors duration-300"
+                            >
+                                Delete Product
+                            </button>
                         )}
                     </div>
                 </div>
