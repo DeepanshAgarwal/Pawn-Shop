@@ -10,6 +10,7 @@ import Profile from "./pages/Profile";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import NotFound from "./pages/NotFound";
 
 const App = () => {
     return (
@@ -41,6 +42,7 @@ const App = () => {
                             </ProtectedRoute>
                         }
                     />
+                    <Route path="*" element={<NotFound />} />
                 </Routes>
             </main>
 

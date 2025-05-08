@@ -34,14 +34,6 @@ const Footer = () => {
                                 My Profile
                             </a>
                         </li>
-                        <li>
-                            <a
-                                href="/contact"
-                                className="hover:text-blue-600 dark:hover:text-gray-200 transition-all duration-300"
-                            >
-                                Contact Us
-                            </a>
-                        </li>
                     </ul>
                 </div>
 
