@@ -111,7 +111,7 @@ const ProductDescription = () => {
                             <img
                                 src={product.image || "/placeholder.jpg"}
                                 alt={product.name || "Product Image"}
-                                className="w-full h-full object-cover"
+                                className="w-full h-full object-contain"
                             />
                         </div>
                     </div>
